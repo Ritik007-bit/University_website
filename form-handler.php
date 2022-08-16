@@ -4,21 +4,19 @@ $visitor_email = $_POST['email'];
 $subject = $_POST['subject'];
 $message = $_POST['message'];
 
-$email_from = 'info@risatutorial.com';
 
-$email_subject = 'New Form Submission';
-
-$email_body = "User Name: $name.\n".
-              "User Email: $visitor_email.\n".
-              "Subject: $subject.\n".
-              "User Message: $message.\n";
-$to = 'sanchita212001@gmail.com'
-
-$header = "From: $email_from \r\n";
-
-$header .= "Reply-To: $visitor_email \r\n";
-
-mail($to,$email_subject,$email_body,$header);
-
-header("Location: contact.html");
+	// Database connection
+	$conn = new mysqli('localhost','root','','test');
+	if($conn->connect_error){
+		echo "$conn->connect_error";
+		die("Connection Failed : ". $conn->connect_error);
+	} else {
+		$stmt = $conn->prepare("insert into query(name, email, subject, message) values(?, ?, ?, ?)");
+		$stmt->bind_param("ssss", $name, $visitor_email, $subject, $message);
+		$execval = $stmt->execute();
+		echo $execval;
+		echo "Message Sent successfully...";
+		$stmt->close();
+		$conn->close();
+	}
 ?>
